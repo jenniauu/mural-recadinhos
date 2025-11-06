@@ -1,4 +1,3 @@
-// src/app/page.tsx
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -21,10 +20,14 @@ export default function Home() {
     // Carrega recadinhos iniciais
     fetchRecadinhos();
 
-    // Configura Pusher
-    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    // Configura Pusher com fallback seguro
+    const pusherKey = process.env.NEXT_PUBLIC_PUSHER_KEY || 'sua_key_temporaria';
+    const pusherCluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER || 'eu';
+
+    const pusher = new Pusher(pusherKey, {
+      cluster: pusherCluster,
     });
+
     const channel = pusher.subscribe('mural-channel');
     channel.bind('new-recadinho', (data: Recadinho) => {
       setRecadinhos((prev) => [data, ...prev]);
@@ -36,69 +39,90 @@ export default function Home() {
   }, []);
 
   const fetchRecadinhos = async () => {
-    const res = await fetch('/api/recadinhos');
-    const data = await res.json();
-    setRecadinhos(data);
+    try {
+      const res = await fetch('/api/recadinhos');
+      if (res.ok) {
+        const data = await res.json();
+        setRecadinhos(data);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar recadinhos:', error);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!nome.trim() || !mensagem.trim()) return;
+
     setLoading(true);
-    const res = await fetch('/api/recadinhos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ nome, mensagem }),
-    });
-    if (res.ok) {
+    try {
+      await fetch('/api/recadinhos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, mensagem }),
+      });
       setNome('');
       setMensagem('');
+    } catch (error) {
+      console.error('Erro ao enviar:', error);
     }
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 to-pink-100 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
-        <h1 className="text-3xl font-bold text-center text-pink-800">Mural de Recadinhos</h1>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 to-pink-100 p-4">
+      <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 mt-10">
+        <h1 className="text-3xl font-bold text-center text-pink-800 mb-6">
+          Mural de Recadinhos
+        </h1>
+
+        <form onSubmit={handleSubmit} className="space-y-4 mb-6">
           <input
             type="text"
             placeholder="Seu nome"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-pink-500"
             required
           />
           <textarea
-            placeholder="Deixe seu recadinho fofo aqui..."
+            placeholder="Deixe seu recadinho fofo..."
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
-            rows={4}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+            rows={3}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-pink-500"
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-800 disabled:opacity-50"
+            className="w-full bg-pink-500 text-white py-3 rounded-lg font-bold hover:bg-pink-800 disabled:opacity-50"
           >
-            {loading ? 'Enviando...' : 'Enviar Recadinho'}
+            {loading ? 'Enviando...' : 'Enviar'}
           </button>
         </form>
 
-        <div className="space-y-4 max-h-96 overflow-y-auto">
-          {recadinhos.map((rec) => (
-            <div key={rec.id} className="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-400">
-              <h3 className="font-bold text-pink-800">{rec.nome}</h3>
-              <p className="text-gray-700 mt-1">{rec.mensagem}</p>
-              <p className="text-xs text-gray-500 mt-2">
-                {new Date(rec.createdAt).toLocaleString('pt-BR')}
-              </p>
-            </div>
-          ))}
-          {recadinhos.length === 0 && (
-            <p className="text-center text-gray-500 italic">Aguardando os primeiros recadinhos... 🎉</p>
+        <div className="space-y-3 max-h-96 overflow-y-auto">
+          {recadinhos.length === 0 ? (
+            <p className="text-center text-gray-500 italic">
+              Ainda não tem recadinhos... Seja o primeiro!
+            </p>
+          ) : (
+            recadinhos.map((r) => (
+              <div key={r.id} className="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-400">
+                <p className="font-bold text-pink-800">{r.nome}</p>
+                <p className="text-gray-700">{r.mensagem}</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {new Date(r.createdAt).toLocaleString('pt-BR')}
+                </p>
+              </div>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}   ))
           )}
         </div>
       </div>
