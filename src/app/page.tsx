@@ -59,7 +59,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 to-pink-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
-        <h1 className="text-3xl font-bold text-center text-pink-800">💕 Mural de Recadinhos 💕</h1>
+        <h1 className="text-3xl font-bold text-center text-pink-800">Mural de Recadinhos</h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -83,7 +83,7 @@ export default function Home() {
             disabled={loading}
             className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-800 disabled:opacity-50"
           >
-            {loading ? 'Enviando...' : 'Enviar Recadinho ✨'}
+            {loading ? 'Enviando...' : 'Enviar Recadinho'}
           </button>
         </form>
 
