@@ -57,9 +57,9 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 to-purple-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 to-pink-100 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 space-y-6">
-        <h1 className="text-3xl font-bold text-center text-purple-600">💕 Mural de Recadinhos 💕</h1>
+        <h1 className="text-3xl font-bold text-center text-pink-800">💕 Mural de Recadinhos 💕</h1>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -67,7 +67,7 @@ export default function Home() {
             placeholder="Seu nome"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
             required
           />
           <textarea
@@ -75,13 +75,13 @@ export default function Home() {
             value={mensagem}
             onChange={(e) => setMensagem(e.target.value)}
             rows={4}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
             required
           />
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-purple-500 text-white py-3 rounded-lg font-semibold hover:bg-purple-600 disabled:opacity-50"
+            className="w-full bg-pink-500 text-white py-3 rounded-lg font-semibold hover:bg-pink-800 disabled:opacity-50"
           >
             {loading ? 'Enviando...' : 'Enviar Recadinho ✨'}
           </button>
@@ -89,8 +89,8 @@ export default function Home() {
 
         <div className="space-y-4 max-h-96 overflow-y-auto">
           {recadinhos.map((rec) => (
-            <div key={rec.id} className="bg-pink-50 p-4 rounded-lg border-l-4 border-purple-400">
-              <h3 className="font-bold text-purple-600">{rec.nome}</h3>
+            <div key={rec.id} className="bg-pink-50 p-4 rounded-lg border-l-4 border-pink-400">
+              <h3 className="font-bold text-pink-800">{rec.nome}</h3>
               <p className="text-gray-700 mt-1">{rec.mensagem}</p>
               <p className="text-xs text-gray-500 mt-2">
                 {new Date(rec.createdAt).toLocaleString('pt-BR')}
