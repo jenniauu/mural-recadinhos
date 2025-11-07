@@ -35,16 +35,18 @@ export default function Home() {
   }, []);
 
   const fetchRecadinhos = async () => {
-    try {
-      const res = await fetch('/api/recadinhos');
-      if (res.ok) {
-        const data = await res.json();
-        setRecadinhos(data);
-      }
-    } catch (err) {
-      console.error('Erro ao carregar:', err);
+  try {
+    const res = await fetch('/api/recadinhos', { cache: 'no-store' });
+    if (res.ok) {
+      const data = await res.json();
+      setRecadinhos(data);
+    } else {
+      console.error('Erro na API:', res.status);
     }
-  };
+  } catch (err) {
+    console.error('Erro ao carregar recadinhos:', err);
+  }
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
